@@ -44,6 +44,7 @@ gem 'maxmind-db', '~> 1.0'
 gem 'kaminari', '>= 1.2.1'
 gem 'peatio', '~> 0.4.4'
 gem 'rack-cors', '~> 1.0.2'
+gem 'rack-attack', '>= 6.5.0'
 
 # REST-like API framework for Ruby
 gem 'grape', '~> 1.4'
