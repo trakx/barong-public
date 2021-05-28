@@ -5,7 +5,7 @@ module API::V2::Queries
 
     # initialize query to get User.all
     def initialize(initial_scope)
-      @initial_scope = initial_scope.left_outer_joins(:profiles)
+      @initial_scope = initial_scope.left_outer_joins(:profiles).uniq
     end
 
     # returns query with with all applied filters
