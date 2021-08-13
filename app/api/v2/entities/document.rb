@@ -5,15 +5,20 @@ module API
     module Entities
       # Return user document with related info
       class Document < API::V2::Entities::Base
-        expose :upload,
+        expose :upload_url,
                documentation: {
                 type: 'String',
-                desc: 'File url and type'
+                desc: 'File url'
                } do |document|
-          {
-            url: document.verification_url,
-            type: document.upload.file.extension
-          }
+          document.verification_url
+        end
+
+        expose :upload_type,
+               documentation: {
+                 type: 'String',
+                 desc: 'File type'
+               } do |document|
+          document.upload.file.extension
         end
 
         expose :doc_type,
