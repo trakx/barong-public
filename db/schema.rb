@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_07_094208) do
+ActiveRecord::Schema.define(version: 2021_08_18_134551) do
 
   create_table "activities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.bigint "user_id", null: false
@@ -140,6 +140,15 @@ ActiveRecord::Schema.define(version: 2021_04_07_094208) do
     t.index ["user_id"], name: "index_profiles_on_user_id"
   end
 
+  create_table "refresh_tokens", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.binary "instance_id"
+    t.string "token"
+    t.string "user_id"
+    t.boolean "revoked"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "restrictions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "category", null: false
     t.string "scope", limit: 64, null: false
@@ -174,6 +183,29 @@ ActiveRecord::Schema.define(version: 2021_04_07_094208) do
     t.bigint "referral_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "temp_id"
+    t.string "instance_id"
+    t.string "encrypted_password"
+    t.string "aud"
+    t.timestamp "email_confirmed_at"
+    t.timestamp "invited_at"
+    t.string "phone"
+    t.timestamp "phone_confirmed_at"
+    t.string "confirmation_token"
+    t.timestamp "confirmation_sent_at"
+    t.timestamp "confirmed_at"
+    t.string "recovery_token"
+    t.timestamp "recovery_sent_at"
+    t.string "email_change_token"
+    t.string "email_change"
+    t.timestamp "email_change_sent_at"
+    t.string "phone_change_token"
+    t.string "phone_change"
+    t.timestamp "phone_change_sent_at"
+    t.timestamp "last_sign_in_at"
+    t.json "raw_app_meta_data"
+    t.json "raw_user_meta_data"
+    t.boolean "is_super_admin"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["uid"], name: "index_users_on_uid", unique: true
     t.index ["username"], name: "index_users_on_username", unique: true
