@@ -44,6 +44,8 @@ module API::V2
 
           error!('management.phone.exists', 400) if user.phones.find_by_number(phone_number)
 
+          error!('user.phone_limit_exceeded', 422) if user.phones.count > 5
+
           phone = user.phones.create(number: params[:number], validated_at: Time.now)
           error!(phone.errors.full_messages, 422) if phone.errors.any?
 

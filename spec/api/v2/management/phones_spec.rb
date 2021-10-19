@@ -18,6 +18,7 @@ describe API::V2::Management::Phones, type: :request do
            role: 'member'
   end
   let!(:user) { create(:user) }
+  let!(:user2) { create(:user) }
 
   describe 'POST /phones/get' do
     let(:signers) { %i[alex jeff] }
@@ -196,6 +197,47 @@ describe API::V2::Management::Phones, type: :request do
           do_request
           expect_body.to eq(error: 'management.phone.number_exist')
           expect_status.to eq 400
+        end
+      end
+
+      context 'when there are more than 5 phones for one user' do
+        let(:phone_params) do
+          {
+            uid: user2.uid,
+            number: '12345678911'
+          }
+        end
+  
+        it 'show error about exceeded limits' do
+          expect { do_request }.to change { Phone.count }.by(1)
+          expect_status_to_eq 201
+
+          phone_params[:number] = '12345678912'
+          p phone_params
+
+          expect { do_request }.to change { Phone.count }.by(1)
+          expect_status_to_eq 201
+
+          phone_params[:number] = '12345678913'
+  
+          expect { do_request }.to change { Phone.count }.by(1)
+          expect_status_to_eq 201
+
+          phone_params[:number] = '12345678914'
+  
+          expect { do_request }.to change { Phone.count }.by(1)
+          expect_status_to_eq 201
+
+          phone_params[:number] = '12345678915'
+  
+          expect { do_request }.to change { Phone.count }.by(1)
+          expect_status_to_eq 201
+
+          phone_params[:number] = '12345678916'
+  
+          expect { do_request }.to_not change { Phone.count }.by(1)
+          expect_body.to eq(error: 'user.phone_limit_exceeded')
+          expect_status_to_eq 422
         end
       end
 

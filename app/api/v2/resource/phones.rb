@@ -57,6 +57,8 @@ module API::V2
           phone_number = Phone.international(declared_params[:phone_number])
           error!({ errors: ['resource.phone.exists'] }, 400) if current_user.phones.find_by_number(phone_number)
 
+          error!('user.phone_limit_exceeded', 422) if user.phones.count > 5
+
           phone = current_user.phones.create(number: phone_number)
           code_error!(phone.errors.details, 422) if phone.errors.any?
 
