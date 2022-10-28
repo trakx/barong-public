@@ -220,7 +220,7 @@ module API::V2
                          action: 'login', result: 'failed', error_text: 'invalid_params')
           end
 
-          present user, with: API::V2::Entities::UserWithFullInfo
+          present uid: user.uid, email: user.email
           return status 200
         end
       end
