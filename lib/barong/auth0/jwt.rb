@@ -4,7 +4,7 @@ module Barong
   module Auth0
     class JWT
       def self.verify(token)
-        ::JWT.decode(token,
+        decodedToken = ::JWT.decode(token,
                      nil,
                      true,       # Verify the signature of this token
                      algorithms: 'RS256',
@@ -15,6 +15,11 @@ module Barong
         ) do |header|
           jwks_hash[header['kid']]
         end
+
+        claims = decodedToken.first
+        raise 'JWT azp claim is invalid.' unless Barong::App.config.auth0_client_id == decodedToken.first['azp']
+
+        return decodedToken
       end
 
       def self.jwks_hash

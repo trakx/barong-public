@@ -135,7 +135,6 @@ module API::V2
             # Decode ID token to get user info
             claims = Barong::Auth0::JWT.verify(params[:id_token]).first
             error!({ errors: ['identity.session.auth0.invalid_params'] }, 401) unless claims.key?('email')
-            error!({ errors: ['identity.session.auth0.invalid_params'] }, 405) unless Barong::App.config.auth0_client_id == claims['azp']
             
             user = User.find_by(email: claims['email'])
 
