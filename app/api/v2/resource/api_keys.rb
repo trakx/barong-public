@@ -5,18 +5,7 @@ module API::V2
     # Responsible for CRUD for api keys
     class APIKeys < Grape::API
       helpers ::API::V2::NamedParams
-      helpers do
-        def otp_protected!
-          unless current_user.otp
-            error!({ errors: ['resource.api_key.2fa_disabled'] }, 400)
-          end
-          error!({ errors: ['resource.api_key.missing_totp'] }, 422) unless params[:totp_code].present?
-
-          return if TOTPService.validate?(current_user.uid, params[:totp_code])
-
-          error!({ errors: ['resource.api_key.invalid_totp'] }, 422)
-        end
-      end
+      helpers ::API::V2::Utils
 
       resource :api_keys do
         desc 'Create an api key',
@@ -35,16 +24,10 @@ module API::V2
                    type: String,
                    allow_blank: false,
                    desc: 'Comma separated scopes'
-          requires :totp_code,
-                   type: String,
-                   message: 'resource.api_key.missing_totp',
-                   allow_blank: false,
-                   desc: 'Code from Google Authenticator'
         end
         post do
-          otp_protected!
+          verify_auth0_mfa!
           declared_params = declared(params, include_missing: false)
-                            .except(:totp_code)
                             .merge(scope: params[:scope]&.split(','))
                             .merge(secret: SecureRandom.hex(16))
 
@@ -85,15 +68,10 @@ module API::V2
                    type: String,
                    allow_blank: false,
                    desc: 'State of API Key. "active" state means key is active and can be used for auth'
-          requires :totp_code,
-                   type: String,
-                   allow_blank: false,
-                   desc: 'Code from Google Authenticator'
         end
         patch ':kid' do
-          otp_protected!
+          verify_auth0_mfa!
           declared_params = declared(params, include_missing: false)
-                            .except(:totp_code)
                             .merge(scope: params[:scope]&.split(','))
           api_key = current_user.api_keys.find_by!(kid: params[:kid])
 
@@ -116,13 +94,9 @@ module API::V2
                    type: String,
                    allow_blank: false,
                    desc: 'API key kid'
-          requires :totp_code,
-                   type: String,
-                   allow_blank: false,
-                   desc: 'Code from Google Authenticator'
         end
         delete ':kid' do
-          otp_protected!
+          verify_auth0_mfa!
           api_key = current_user.api_keys.find_by!(kid: params[:kid])
           api_key.destroy
           status 204
@@ -130,7 +104,6 @@ module API::V2
 
         desc 'List all api keys for current account.',
           failure: [
-            { code: 400, message: 'Require 2FA and totp code' },
             { code: 401, message: 'Invalid bearer token' }
           ],
           success: Entities::APIKey

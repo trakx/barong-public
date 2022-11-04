@@ -130,6 +130,7 @@ Barong::App.define do |config|
   config.set(:auth0_domain, '')
   config.set(:auth0_client_id, '')
   config.set(:auth0_audience, '')
+  config.set(:auth0_mfa_lifetime, '5000', type: :integer)
 end
 
 # KYCAID configuring
