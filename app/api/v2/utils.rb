@@ -41,7 +41,7 @@ module API::V2
       error!({ errors: ['resource.api_key.missing_mfa'] }, 401) unless headers['X-Auth-Auth0-Token']
       #error!({ errors: ['resource.api_key.missing_mfa - without authorization header'] }, 401) unless headers['Authorization']
 
-      jwtToken = headers['X-Auth-Auth0-Token']
+      jwtToken = headers['X-Auth-Auth0-Token'].to_s
       #jwtToken = headers['Authorization'].gsub('Bearer ', '')
       claims = Barong::Auth0::JWT.verify(jwtToken).first
 

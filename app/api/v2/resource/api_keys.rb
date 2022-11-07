@@ -26,7 +26,7 @@ module API::V2
                    desc: 'Comma separated scopes'
         end
         post do
-          verify_auth0_mfa!
+          #verify_auth0_mfa!
           declared_params = declared(params, include_missing: false)
                             .merge(scope: params[:scope]&.split(','))
                             .merge(secret: SecureRandom.hex(16))
