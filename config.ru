@@ -14,6 +14,7 @@ use Rack::Cors do
     resource '/api/*',
       methods: %i[get post delete put patch options head],
       headers: :any,
+      expose: ['X-Auth-Auth0-Token'],
       credentials: Barong::App.config.api_cors_allow_credentials,
       max_age: Barong::CORS::Validations.validate_max_age(Barong::App.config.api_cors_max_age)
   end
