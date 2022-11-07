@@ -50,19 +50,20 @@ module API::V2
                             .merge(scope: params[:scope]&.split(','))
                             .merge(secret: SecureRandom.hex(16))
 
+                            puts('JOAO PEDRO :: 1')
           api_key = current_user.api_keys.new(declared_params)
-
+          puts('JOAO PEDRO :: 2')
           APIKey.transaction do
             raise ActiveRecord::Rollback unless api_key.save
           rescue Vault::VaultError
             api_key.errors.add(:api_key, 'could_not_save_secret')
             raise ActiveRecord::Rollback
           end
-
+          puts('JOAO PEDRO :: 3')
           if api_key.errors.any?
             code_error!(api_key.errors.details, 422)
           end
-
+          puts('JOAO PEDRO :: 4')
           present api_key, with: Entities::APIKey
         end
 
