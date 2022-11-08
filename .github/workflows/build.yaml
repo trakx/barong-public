@@ -3,11 +3,9 @@ name: Docker Build and Publish
 on:
   push:
     branches:
-      - options-method-bypass-fix
+      - dev
+      - stage
       - master
-
-  # Run tests for any PRs.
-  pull_request:
 
   workflow_dispatch:
     inputs:
@@ -25,14 +23,20 @@ jobs:
     steps:    
       - uses: actions/checkout@v2
 
+      - name: Bump version
+        id: bumpVersion
+        uses: trakx/bump-version-action/get-tag@v9.1.3
+        with:
+          semverIncrementLevel: ${{github.event.inputs.semverIncrementLevel}}
+
       - name: Build image and tag image
         run: |
           docker build . \
-            --tag "docker.pkg.github.com/$GITHUB_REPOSITORY/$IMAGE_NAME:latest"
+            --tag "docker.pkg.github.com/$GITHUB_REPOSITORY/$IMAGE_NAME:${{steps.bumpVersion.outputs.fullVersion}}"
 
       - name: Log into registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
 
       - name: Publish to GPR
         run: |
-          docker push "docker.pkg.github.com/$GITHUB_REPOSITORY/$IMAGE_NAME:latest"
+          docker push "docker.pkg.github.com/$GITHUB_REPOSITORY/$IMAGE_NAME:${{steps.bumpVersion.outputs.fullVersion}}"
