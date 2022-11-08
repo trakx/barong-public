@@ -26,9 +26,9 @@ module Barong
         verify_iat: true,
         verify_jti: true,
         aud: %w[peatio barong],
+        verify_aud: true,
         sub: 'confirmation',
         verify_sub: true,
-        verify_aud: true,
         algorithms: 'RS256'
       })
       payload, header = ::JWT.decode(token, @verify_options[:pub_key], true, @verify_options)
