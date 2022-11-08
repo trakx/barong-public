@@ -26,6 +26,8 @@ module Barong
         verify_iat: true,
         verify_jti: true,
         aud: %w[peatio barong],
+        sub: 'confirmation',
+        verify_sub: true,
         verify_aud: true,
         algorithms: 'RS256'
       })
