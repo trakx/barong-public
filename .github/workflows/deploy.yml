@@ -29,19 +29,19 @@ jobs:
           curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
           sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
 
-#      - name: Select namespace from environment
-#        id: select_namespace_from_env
-#        run: |
-#          if [ "${{ inputs.runner_name }}" = "dev-trakx-runner" ]; then
-#            echo "::set-output name=namespace::dev-trakx"
-#          elif [ "${{ inputs.runner_name }}" = "stage-trakx-runner" ]; then
-#            echo "::set-output name=namespace::stage-trakx"
-#          elif [ "${{ inputs.runner_name }}" = "prod-trak-runner" ]; then
-#            echo "::set-output name=namespace::prod-trakx"
-#          else
-#            echo "::set-output name=namespace::dev-trakx"
-#          fi
-#
-#      - name: Update barong deployment
-#        run: |
-#          kubectl set image deployment/barong -n ${{steps.select_namespace_from_env.outputs.namespace}} barong="docker.pkg.github.com/$GITHUB_REPOSITORY/$IMAGE_NAME:${{inputs.tag}}"
+      - name: Select namespace from environment
+        id: select_namespace_from_env
+        run: |
+          if [ "${{ inputs.runner_name }}" = "dev-trakx-runner" ]; then
+            echo "::set-output name=namespace::dev-trakx"
+          elif [ "${{ inputs.runner_name }}" = "stage-trakx-runner" ]; then
+            echo "::set-output name=namespace::stage-trakx"
+          elif [ "${{ inputs.runner_name }}" = "prod-trak-runner" ]; then
+            echo "::set-output name=namespace::prod-trakx"
+          else
+            echo "::set-output name=namespace::dev-trakx"
+          fi
+
+      - name: Update barong deployment
+        run: |
+          kubectl set image deployment/barong -n ${{steps.select_namespace_from_env.outputs.namespace}} barong="docker.pkg.github.com/$GITHUB_REPOSITORY/$IMAGE_NAME:${{inputs.tag}}"
