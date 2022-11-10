@@ -8,11 +8,6 @@ on:
         required: true
         default: "ubuntu-latest"
         type: string
-      environment:
-        description: "Environment name"
-        required: true
-        default: "development"
-        type: string
       tag:
         description: "Image tag to deploy"
         required: true
