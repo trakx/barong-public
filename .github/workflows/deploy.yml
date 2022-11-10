@@ -21,7 +21,7 @@ jobs:
   deploy_image:
     runs-on: ${{inputs.runner_name}}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
       
       # Since github runners working in Docker-in-Docker mode we need this workaround
       - name: install kubectl and kustomize
