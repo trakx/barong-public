@@ -32,11 +32,11 @@ jobs:
       - name: Select namespace from environment
         id: select_namespace_from_env
         run: |
-         if [ "${{ inputs.environment }}" = "development" ]; then
+         if [ "${{ inputs.runner_name }}" = "dev-trakx-runner" ]; then
            echo "::set-output name=namespace::dev-trakx"
-         elif [ "${{ inputs.environment }}" = "stage" ]; then
+         elif [ "${{ inputs.runner_name }}" = "stage-trakx-runner" ]; then
            echo "::set-output name=namespace::stage-trakx"
-         elif [ "${{ inputs.environment }}" = "production" ]; then
+         elif [ "${{ inputs.runner_name }}" = "prod-trak-runner" ]; then
            echo "::set-output name=namespace::prod-trakx"
          else
            echo "::set-output name=namespace::dev-trakx"
