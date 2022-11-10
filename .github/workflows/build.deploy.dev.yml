@@ -24,7 +24,7 @@ jobs:
       runner_name: 'dev-trakx-runner'
 
   deploy_image:
-    needs: [build_docker_image_for_kubernetes]
+#    needs: [build_docker_image_for_kubernetes]
     uses: ./.github/workflows/deploy.yml
     with:
       runner_name: 'dev-trakx-runner'
