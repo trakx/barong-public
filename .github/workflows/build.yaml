@@ -47,4 +47,4 @@ jobs:
           tag: v${{steps.bumpVersion.outputs.fullVersion}}
           githubToken: ${{secrets.GITHUB_TOKEN}}
     outputs:
-      Tag: ${{steps.bumpVersion.outputs.fullVersion}}
+      tag: ${{steps.bumpVersion.outputs.fullVersion}}
