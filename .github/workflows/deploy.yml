@@ -1,0 +1,52 @@
+name: Deploy image to EKS Cluster
+
+on:
+  workflow_call:
+    inputs:
+      runner_name:
+        description: "Name of runner to use."
+        required: true
+        default: "ubuntu-latest"
+        type: string
+      environment:
+        description: "Environment name"
+        required: true
+        default: "development"
+        type: string
+      tag:
+        description: "Image tag to deploy"
+        required: true
+        default: "latest"
+        type: string
+
+env:
+  IMAGE_NAME: "barong"
+
+jobs:
+  deploy_image:
+    runs-on: ${{inputs.runner_name}}
+    steps:
+      - uses: actions/checkout@v3
+      
+      # Since github runners working in Docker-in-Docker mode we need this workaround
+      - name: install kubectl and kustomize
+        run: |
+          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+          sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+
+      - name: Select namespace from environment
+        id: select_namespace_from_env
+        run: |
+         if [ "${{ inputs.environment }}" = "development" ]; then
+           echo "::set-output name=namespace::dev-trakx"
+         elif [ "${{ inputs.environment }}" = "stage" ]; then
+           echo "::set-output name=namespace::stage-trakx"
+         elif [ "${{ inputs.environment }}" = "production" ]; then
+           echo "::set-output name=namespace::prod-trakx"
+         else
+           echo "::set-output name=namespace::dev-trakx"
+         fi
+
+      - name: Update barong deployment
+        run: |
+          kubectl set image deployment/barong -n ${{steps.select_namespace_from_env.outputs.namespace}} barong="docker.pkg.github.com/$GITHUB_REPOSITORY/$IMAGE_NAME:${{inputs.tag}}"

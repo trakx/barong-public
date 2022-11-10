@@ -1,18 +1,17 @@
 name: Docker Build and Publish
 
 on:
-  push:
-    branches:
-      - dev
-      - stage
-      - master
-
-  workflow_dispatch:
+  workflow_call:
     inputs:
-      semverIncrementLevel:
-        description: 'Level of the semver (major.minor.patch) to be increased to get the new package version.'
+      runner_name:
+        description: "Name of runner to use."
         required: true
-        default: 'patch'
+        default: "ubuntu-latest"
+        type: string
+    outputs:
+      tag:
+        description: "The image tag"
+        value: ${{ jobs.build_and_publish_docker_image.outputs.Tag}}
 
 env:
   IMAGE_NAME: "barong"
@@ -40,3 +39,12 @@ jobs:
       - name: Publish to GPR
         run: |
           docker push "docker.pkg.github.com/$GITHUB_REPOSITORY/$IMAGE_NAME:${{steps.bumpVersion.outputs.fullVersion}}"
+
+      - name: Push version tag
+        id: pushTag
+        uses: trakx/bump-version-action/push-tag@v9.1.3
+        with:
+          tag: v${{steps.bumpVersion.outputs.fullVersion}}
+          githubToken: ${{secrets.GITHUB_TOKEN}}
+    outputs:
+      Tag: ${{steps.bumpVersion.outputs.fullVersion}}

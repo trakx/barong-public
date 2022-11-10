@@ -1,0 +1,30 @@
+name: Build And Deploy Stage
+
+on:
+  push:
+    branches:
+      - stage
+
+  workflow_dispatch:
+    inputs:
+      semverIncrementLevel:
+        description: 'Level of the semver (major.minor.patch) to be increased to get the new package version.'
+        required: true
+        default: 'patch'
+
+jobs:
+  build_docker_image_for_kubernetes:
+    # Ensure test job passes before pushing image.
+    #needs: test
+
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    uses: ./.github/workflows/build.yaml
+    with:
+      runner_name: 'stage-trakx-runner'
+
+  deploy_image:
+    needs: [build_docker_image_for_kubernetes]
+    uses: ./.github/workflows/deploy.yml
+    with:
+      runner_name: 'stage-trakx-runner'
+      tag: ${{needs.build_docker_image_for_kubernetes.outputs.Tag}}
