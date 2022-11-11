@@ -6,7 +6,7 @@ on:
       runner_name:
         description: "Name of runner to use."
         required: true
-        default: "ubuntu-latest"
+        default: "dev-trakx-runner"
         type: string
     outputs:
       tag:
